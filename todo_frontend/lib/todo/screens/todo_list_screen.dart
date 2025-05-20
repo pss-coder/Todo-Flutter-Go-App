@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:todo_frontend/todo/models/todo.dart';
 import 'package:todo_frontend/todo/services/todo_api.dart';
@@ -12,30 +15,60 @@ class TodoListScreen extends StatefulWidget {
 }
 
 class _TodoListScreenState extends State<TodoListScreen> {
-  // TextField Controller
   final TextEditingController _controller = TextEditingController();
-
   final TodoApi api = TodoGoService();
+  
+  // late Future<List<Todo>> _todos;
+  List<Todo> _todos = [];
 
-  late Future<List<Todo>> _todos;
+  late WebSocket socket;
+
+  void connectToWebSocket() async {
+    try {
+      socket = await WebSocket.connect("ws://localhost:8080/ws");
+      print("connect to websocket");
+
+      // we get our initial data from API once
+      await api.getTodos().then((todos) {
+        setState(() {
+          _todos = todos;
+        });
+      });
+
+      socket.listen((data) {
+        print("Received: $data");
+
+      final todos = jsonDecode(data) 
+        .map<Todo>((json) => Todo.fromJson(json))
+        .toList();
+
+        setState(() {
+          _todos = todos;
+        });
+
+      });
+    } catch (e) {
+      print('Websocket error: $e');
+    }
+  }
+  
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _todos = api.getTodos();
-  }
+    connectToWebSocket();
 
-    // Delete Handler function
-  // final Function(String) onDelete;
+    // _todos = api.getTodos();
+  }
 
   Future<void> deleteTodo(String id) async {
     // Call the API to delete the todo item
     await api.deleteTodo(id).then((_) {
       // Refresh the todo list
-      setState(() {
-        _todos = api.getTodos();
-      });
+      // setState(() {
+      //   _todos = api.getTodos();
+      // });
     }).catchError((error) {
       // Handle error
       print('Error deleting todo: $error');
@@ -46,9 +79,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
     // Call the API to toggle the todo item
     await api.toggleComplete(id).then((_) {
       // Refresh the todo list
-      setState(() {
-        _todos = api.getTodos();
-      });
+      // setState(() {
+      //   _todos = api.getTodos();
+      // });
     }).catchError((error) {
       // Handle error
       print('Error toggling todo: $error');
@@ -62,15 +95,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
       appBar: AppBar(
         title: const Text('Todo List'),
       ),
-      body: FutureBuilder(
-        future: _todos,
-        builder: (context, AsyncSnapshot<List<Todo>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Column(
+      body: _todos.isEmpty
+      ? 
+      Column(
               children: [
                 const Center(child: Text('No todos found. Add some!')),
                 Padding(
@@ -85,10 +112,10 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   // Here you can call your API to add the new todo item
                   await api.addTodo(value);
 
-                  setState(() {
-                    // Refresh the todo list
-                    _todos = api.getTodos();
-                  });
+                  // setState(() {
+                  //   // Refresh the todo list
+                  //   _todos = api.getTodos();
+                  // });
         
                   // clear the text field
                   _controller.clear();
@@ -101,18 +128,17 @@ class _TodoListScreenState extends State<TodoListScreen> {
             ),
 
               ],
-            );
-          }
+            )
+      : 
 
-          final todos = snapshot.data!;
-          return Column(
+      Column(
           children: [
             Expanded(
               child: ListView.builder(
-                itemCount: todos.length, // Replace with your todo items count
+                itemCount: _todos.length, // Replace with your todo items count
                 itemBuilder: (context, index) {
                   return TodoRow(
-                    todo: todos[index],
+                    todo: _todos[index],
                     onToggleComplete: toggleComplete,
                     onDelete: deleteTodo,
                   );
@@ -131,10 +157,10 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   // Here you can call your API to add the new todo item
                   await api.addTodo(value);
 
-                  setState(() {
-                    // Refresh the todo list
-                    _todos = api.getTodos();
-                  });
+                  // setState(() {
+                  //   // Refresh the todo list
+                  //   _todos = api.getTodos();
+                  // });
         
                   // clear the text field
                   _controller.clear();
@@ -146,10 +172,98 @@ class _TodoListScreenState extends State<TodoListScreen> {
               ),
             ),
           ],
-        );
+        )
 
-        },
-      ),
+      
+      
+      // FutureBuilder(
+      //   future: _todos,
+      //   builder: (context, AsyncSnapshot<List<Todo>> snapshot) {
+      //     if (snapshot.connectionState == ConnectionState.waiting) {
+      //       return const Center(child: CircularProgressIndicator());
+      //     } else if (snapshot.hasError) {
+      //       return Center(child: Text('Error: ${snapshot.error}'));
+      //     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+      //       return Column(
+      //         children: [
+      //           const Center(child: Text('No todos found. Add some!')),
+      //           Padding(
+      //         padding: const EdgeInsets.all(32.0),
+      //         child: TextFormField(
+      //           controller: _controller,
+      //           textInputAction: TextInputAction.go,
+      //           onFieldSubmitted: (value) async {
+      //             // Handle the submission of the new todo item
+      //             print('New todo item: $value');
+
+      //             // Here you can call your API to add the new todo item
+      //             await api.addTodo(value);
+
+      //             setState(() {
+      //               // Refresh the todo list
+      //               _todos = api.getTodos();
+      //             });
+        
+      //             // clear the text field
+      //             _controller.clear();
+      //           },
+      //           decoration: InputDecoration(
+      //             labelText: 'Add a new todo',
+      //             border: OutlineInputBorder(),
+      //           ),
+      //         ),
+      //       ),
+
+      //         ],
+      //       );
+      //     }
+
+      //     final todos = snapshot.data!;
+      //     return Column(
+      //     children: [
+      //       Expanded(
+      //         child: ListView.builder(
+      //           itemCount: todos.length, // Replace with your todo items count
+      //           itemBuilder: (context, index) {
+      //             return TodoRow(
+      //               todo: todos[index],
+      //               onToggleComplete: toggleComplete,
+      //               onDelete: deleteTodo,
+      //             );
+      //           },
+      //         ),
+      //       ),
+      //       Padding(
+      //         padding: const EdgeInsets.all(32.0),
+      //         child: TextFormField(
+      //           controller: _controller,
+      //           textInputAction: TextInputAction.go,
+      //           onFieldSubmitted: (value) async {
+      //             // Handle the submission of the new todo item
+      //             print('New todo item: $value');
+
+      //             // Here you can call your API to add the new todo item
+      //             await api.addTodo(value);
+
+      //             // setState(() {
+      //             //   // Refresh the todo list
+      //             //   _todos = api.getTodos();
+      //             // });
+        
+      //             // clear the text field
+      //             _controller.clear();
+      //           },
+      //           decoration: InputDecoration(
+      //             labelText: 'Add a new todo',
+      //             border: OutlineInputBorder(),
+      //           ),
+      //         ),
+      //       ),
+      //     ],
+      //   );
+
+      //   },
+      // ),
     );
   }
 }
