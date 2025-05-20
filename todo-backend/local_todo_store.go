@@ -13,7 +13,6 @@ func (t *Todos) addTodo(title string) Todo {
 
 // Toggle the completed status of a todo
 func (t *Todos) toggleTodo(id string) Todo {
-	// Find the todo with the given ID and toggle its completed status
 	for i, todo := range *t {
 		if todo.Id == id {
 			(*t)[i].Completed = !todo.Completed

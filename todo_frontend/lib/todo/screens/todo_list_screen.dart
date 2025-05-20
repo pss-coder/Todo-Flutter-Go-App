@@ -26,6 +26,36 @@ class _TodoListScreenState extends State<TodoListScreen> {
     _todos = api.getTodos();
   }
 
+    // Delete Handler function
+  // final Function(String) onDelete;
+
+  Future<void> deleteTodo(String id) async {
+    // Call the API to delete the todo item
+    await api.deleteTodo(id).then((_) {
+      // Refresh the todo list
+      setState(() {
+        _todos = api.getTodos();
+      });
+    }).catchError((error) {
+      // Handle error
+      print('Error deleting todo: $error');
+    });
+  }
+
+  Future<void> toggleComplete(String id) async {
+    // Call the API to toggle the todo item
+    await api.toggleComplete(id).then((_) {
+      // Refresh the todo list
+      setState(() {
+        _todos = api.getTodos();
+      });
+    }).catchError((error) {
+      // Handle error
+      print('Error toggling todo: $error');
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +70,38 @@ class _TodoListScreenState extends State<TodoListScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No todos found.'));
+            return Column(
+              children: [
+                const Center(child: Text('No todos found. Add some!')),
+                Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: TextFormField(
+                controller: _controller,
+                textInputAction: TextInputAction.go,
+                onFieldSubmitted: (value) async {
+                  // Handle the submission of the new todo item
+                  print('New todo item: $value');
+
+                  // Here you can call your API to add the new todo item
+                  await api.addTodo(value);
+
+                  setState(() {
+                    // Refresh the todo list
+                    _todos = api.getTodos();
+                  });
+        
+                  // clear the text field
+                  _controller.clear();
+                },
+                decoration: InputDecoration(
+                  labelText: 'Add a new todo',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+
+              ],
+            );
           }
 
           final todos = snapshot.data!;
@@ -52,6 +113,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                 itemBuilder: (context, index) {
                   return TodoRow(
                     todo: todos[index],
+                    onToggleComplete: toggleComplete,
+                    onDelete: deleteTodo,
                   );
                 },
               ),

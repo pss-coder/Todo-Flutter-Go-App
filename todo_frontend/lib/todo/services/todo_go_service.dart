@@ -31,9 +31,21 @@ class TodoGoService extends TodoApi {
   }
 
   @override
-  Future<Todo> deleteTodo(String id) {
-    // TODO: implement deleteTodo
-    throw UnimplementedError();
+  Future<Todo> deleteTodo(String id) async {
+    final request = await client.deleteUrl(Uri.parse(baseUrl));
+    request.headers.set('Content-Type', 'application/json');
+
+    final body = jsonEncode({
+      'id': id,
+    });
+    request.write(body);
+
+    final response = await request.close();
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete todo');
+    }
+    final data = await response.transform(utf8.decoder).join();
+    return Todo.fromJson(jsonDecode(data));
   }
 
   @override
@@ -56,9 +68,21 @@ class TodoGoService extends TodoApi {
   }
 
   @override
-  Future<Todo> updateTodo(Todo todo) {
-    // TODO: implement updateTodo
-    throw UnimplementedError();
+  Future<Todo> toggleComplete(String id) async {
+    final request = await client.putUrl(Uri.parse(baseUrl));
+    request.headers.set('Content-Type', 'application/json');
+
+    final body = jsonEncode({
+      'id': id,
+    });
+    request.write(body);
+
+    final response = await request.close();
+    if (response.statusCode != 200) {
+      throw Exception('Failed to toggle todo');
+    }
+    final data = await response.transform(utf8.decoder).join();
+    return Todo.fromJson(jsonDecode(data));
   }
 
 }

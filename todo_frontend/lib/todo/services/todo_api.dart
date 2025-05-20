@@ -3,7 +3,7 @@ import 'package:todo_frontend/todo/models/todo.dart';
 abstract class TodoApi {
   Future<List<Todo>> getTodos();
   Future<Todo> addTodo(String title);
-  Future<Todo> updateTodo(Todo todo);
+  Future<Todo> toggleComplete(String id);
   Future<Todo> deleteTodo(String id);
 }
 
