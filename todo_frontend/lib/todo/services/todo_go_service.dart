@@ -5,13 +5,29 @@ import 'package:todo_frontend/todo/models/todo.dart';
 import 'package:todo_frontend/todo/services/todo_api.dart';
 
 class TodoGoService extends TodoApi {
-  static const String baseUrl = "http://localhost:8080";
+  static const String baseUrl = "http://localhost:8080/todos";
   final client = HttpClient();
 
   @override
-  Future<Todo> addTodo(Todo todo) {
-    // TODO: implement addTodo
-    throw UnimplementedError();
+  Future<Todo> addTodo(String title) async {
+    final request = await client.postUrl(Uri.parse(baseUrl));
+    request.headers.set('Content-Type', 'application/json');
+    
+    final body = jsonEncode({
+      'title': title,
+      'completed': false,
+    });
+    request.write(body);
+
+    // send request
+    final response = await request.close();
+    if (response.statusCode != 200) {
+      throw Exception('Failed to add todo');
+    }
+
+    final data = await response.transform(utf8.decoder).join();
+    return Todo.fromJson(jsonDecode(data));
+    // throw UnimplementedError();
   }
 
   @override
@@ -22,7 +38,7 @@ class TodoGoService extends TodoApi {
 
   @override
   Future<List<Todo>> getTodos() async {
-    final requests = await client.getUrl(Uri.parse('$baseUrl/todos'));
+    final requests = await client.getUrl(Uri.parse(baseUrl));
     final response = await requests.close();
 
     if (response.statusCode != 200) {

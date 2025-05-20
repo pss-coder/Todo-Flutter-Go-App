@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_frontend/todo/models/todo.dart';
+import 'package:todo_frontend/todo/services/todo_api.dart';
 import 'package:todo_frontend/todo/services/todo_go_service.dart';
 import 'package:todo_frontend/todo/widget/todo_row.dart';
 
@@ -14,7 +15,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   // TextField Controller
   final TextEditingController _controller = TextEditingController();
 
-  final api = TodoGoService();
+  final TodoApi api = TodoGoService();
 
   late Future<List<Todo>> _todos;
 
@@ -60,9 +61,17 @@ class _TodoListScreenState extends State<TodoListScreen> {
               child: TextFormField(
                 controller: _controller,
                 textInputAction: TextInputAction.go,
-                onFieldSubmitted: (value) {
+                onFieldSubmitted: (value) async {
                   // Handle the submission of the new todo item
                   print('New todo item: $value');
+
+                  // Here you can call your API to add the new todo item
+                  await api.addTodo(value);
+
+                  setState(() {
+                    // Refresh the todo list
+                    _todos = api.getTodos();
+                  });
         
                   // clear the text field
                   _controller.clear();
