@@ -62,6 +62,15 @@ class _TodoListScreenState extends State<TodoListScreen> {
     // _todos = api.getTodos();
   }
 
+  @override
+  void dispose() {
+    socket.close();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  
+
   Future<void> deleteTodo(String id) async {
     // Call the API to delete the todo item
     await api.deleteTodo(id).then((_) {
