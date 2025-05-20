@@ -23,9 +23,22 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   late WebSocket socket;
 
+  static String setupWSTodoBaseUrl()  {
+  if (Platform.isAndroid) {
+    // Android emulator
+    return "ws://10.0.2.2:8080/ws";
+  } else if (Platform.isIOS) {
+    // iOS simulator or device
+    return "ws://localhost:8080/ws";
+  } else {
+    // Other platforms, like web, Windows, etc.
+    return "ws://localhost:8080/ws";
+  }
+  }
+
   void connectToWebSocket() async {
     try {
-      socket = await WebSocket.connect("ws://localhost:8080/ws");
+      socket = await WebSocket.connect(setupWSTodoBaseUrl());
       print("connect to websocket");
 
       // we get our initial data from API once

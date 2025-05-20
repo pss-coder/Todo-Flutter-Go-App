@@ -4,8 +4,25 @@ import 'dart:io';
 import 'package:todo_frontend/todo/models/todo.dart';
 import 'package:todo_frontend/todo/services/todo_api.dart';
 
+
+
+
 class TodoGoService extends TodoApi {
-  static const String baseUrl = "http://localhost:8080/todos";
+  static String setupTodoBaseUrl()  {
+  if (Platform.isAndroid) {
+    // Android emulator
+    return "http://10.0.2.2:8080/todos";
+  } else if (Platform.isIOS) {
+    // iOS simulator or device
+    return "http://localhost:8080/todos";
+  } else {
+    // Other platforms, like web, Windows, etc.
+    return "http://localhost:8080/todos";
+  }
+}
+
+
+  static final String baseUrl = setupTodoBaseUrl();
   final client = HttpClient();
 
   @override
