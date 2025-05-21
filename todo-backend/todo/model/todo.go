@@ -1,4 +1,4 @@
-package todobackend
+package model
 
 import "github.com/google/uuid"
 
@@ -12,7 +12,7 @@ type Todo struct {
 	Completed bool   `json:"completed"`
 }
 
-func newTodo(title string) *Todo {
+func NewTodo(title string) *Todo {
 	return &Todo{Id: generateUniqueId(), Title: title, Completed: false}
 }
 

@@ -6,11 +6,12 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	model "github.com/pss-coder/go-flutter-app-backend/todo/model"
 )
 
 type WebSocketHub struct {
 	clients   map[*websocket.Conn]bool // map of active ws connections
-	broadcast chan Todos               // channel to send our todo list to all clients
+	broadcast chan model.Todos         // channel to send our todo list to all clients
 	mu        sync.Mutex               // to protect shared access to clients
 }
 
@@ -23,7 +24,7 @@ var upgrader = websocket.Upgrader{
 func NewWebSocketHub() *WebSocketHub {
 	return &WebSocketHub{
 		clients:   make(map[*websocket.Conn]bool),
-		broadcast: make(chan Todos),
+		broadcast: make(chan model.Todos),
 	}
 }
 
@@ -64,7 +65,7 @@ func (hub *WebSocketHub) StartBroadcasting() {
 	}
 }
 
-func (hub *WebSocketHub) NotifyClients(todos []Todo) {
+func (hub *WebSocketHub) NotifyClients(todos model.Todos) {
 	go func() {
 		hub.broadcast <- todos
 	}()
