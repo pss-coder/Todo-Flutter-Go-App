@@ -12,9 +12,10 @@ Todo:
 
 - Persistance Storage: Use a backend database to store todos - Done :)
 
-- Serverless in AWS??
-
 - Authentication:
+
+
 - DevOps: Dockerise golang backend
+- Serverless in AWS??
 - Implement GraphQL query as backend <-
 - Twilio Service - Call to query my Todos, smart call
