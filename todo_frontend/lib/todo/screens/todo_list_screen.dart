@@ -16,6 +16,8 @@ class TodoListScreen extends StatefulWidget {
 
 class _TodoListScreenState extends State<TodoListScreen> {
   final TextEditingController _controller = TextEditingController();
+  FocusNode myFocusNode = FocusNode();
+
   final TodoApi api = TodoGoService();
   
   // late Future<List<Todo>> _todos;
@@ -79,6 +81,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
   void dispose() {
     socket.close();
     _controller.dispose();
+    myFocusNode.dispose();
     super.dispose();
   }
 
@@ -116,6 +119,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Todo List'),
+        actions: [
+          IconButton(onPressed: (){}, icon: Icon(Icons.logout_sharp))
+        ],
       ),
       body: _todos.isEmpty
       ? 
@@ -126,6 +132,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
               padding: const EdgeInsets.all(32.0),
               child: TextFormField(
                 controller: _controller,
+                focusNode: myFocusNode,
+                onEditingComplete: () {},
                 textInputAction: TextInputAction.go,
                 onFieldSubmitted: (value) async {
                   // Handle the submission of the new todo item
@@ -141,6 +149,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
         
                   // clear the text field
                   _controller.clear();
+                  myFocusNode.requestFocus();
                 },
                 decoration: InputDecoration(
                   labelText: 'Add a new todo',
@@ -172,6 +181,11 @@ class _TodoListScreenState extends State<TodoListScreen> {
               child: TextFormField(
                 controller: _controller,
                 textInputAction: TextInputAction.go,
+                focusNode: myFocusNode,
+                onTapUpOutside: (event) {
+                  myFocusNode.unfocus();
+                },
+                // onEditingComplete: () {},
                 onFieldSubmitted: (value) async {
                   // Handle the submission of the new todo item
                   print('New todo item: $value');
@@ -186,6 +200,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
         
                   // clear the text field
                   _controller.clear();
+                  myFocusNode.requestFocus();
                 },
                 decoration: InputDecoration(
                   labelText: 'Add a new todo',
