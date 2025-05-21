@@ -6,10 +6,10 @@ import "github.com/google/uuid"
 type Todos []Todo
 
 type Todo struct {
-	Id string `json:"id"` // our json body will have a field called id
+	Id string `json:"id" db:"id"` // our json body will have a field called id
 	// and it will be mapped to the Id field of the Todo struct
-	Title     string `json:"title"`
-	Completed bool   `json:"completed"`
+	Title     string `json:"title" db:"title"`
+	Completed bool   `json:"completed" db:"completed"`
 }
 
 func NewTodo(title string) *Todo {

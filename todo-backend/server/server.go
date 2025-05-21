@@ -1,4 +1,4 @@
-package todobackend
+package server
 
 import (
 	"encoding/json"

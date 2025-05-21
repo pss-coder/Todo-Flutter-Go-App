@@ -7,8 +7,13 @@ Todo:
 - Impelement Websocket to listen to todo changes and update frontend accordingly <- Done
 
 
-- Testing: Do Unit Testing <- Start Early and Small
-- Persistance Storage: Use a backend database to store todos
+- Testing: Do Unit Testing <- Start Early and Small - Done
+
+
+- Persistance Storage: Use a backend database to store todos - Done :)
+
+- Serverless in AWS??
+
 - Authentication:
 - DevOps: Dockerise golang backend
 - Implement GraphQL query as backend <-
