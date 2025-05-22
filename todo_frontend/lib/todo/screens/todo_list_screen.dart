@@ -120,7 +120,11 @@ class _TodoListScreenState extends State<TodoListScreen> {
       appBar: AppBar(
         title: const Text('Todo List'),
         actions: [
-          IconButton(onPressed: (){}, icon: Icon(Icons.logout_sharp))
+          IconButton(onPressed: (){
+            // Handle logout action
+            print('Logout button pressed');
+            Navigator.pushReplacementNamed(context, '/');
+          }, icon: Icon(Icons.logout_sharp))
         ],
       ),
       body: _todos.isEmpty
