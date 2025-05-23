@@ -17,7 +17,7 @@ func GetTodos(store store.TodoStore) gin.HandlerFunc {
 	}
 }
 
-func AddTodo(store store.TodoStore) gin.HandlerFunc {
+func AddTodo(store store.TodoStore, ws *models.WebSockethub) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var todo models.Todo
 
@@ -31,10 +31,11 @@ func AddTodo(store store.TodoStore) gin.HandlerFunc {
 
 		todo = store.AddTodo(todo)
 		c.JSON(http.StatusCreated, todo)
+		ws.NotifyClients(store.GetTodos())
 	}
 }
 
-func ToggleTodo(store store.TodoStore) gin.HandlerFunc {
+func ToggleTodo(store store.TodoStore, ws *models.WebSockethub) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
 
@@ -46,12 +47,13 @@ func ToggleTodo(store store.TodoStore) gin.HandlerFunc {
 		}
 
 		todo := store.ToggleTodo(uint(idUint))
+		ws.NotifyClients(store.GetTodos())
 		c.JSON(http.StatusOK, todo)
 		fmt.Println("Todo: ", todo)
 	}
 }
 
-func DeleteTodo(store store.TodoStore) gin.HandlerFunc {
+func DeleteTodo(store store.TodoStore, ws *models.WebSockethub) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
 

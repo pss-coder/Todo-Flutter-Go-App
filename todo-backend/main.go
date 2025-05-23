@@ -43,8 +43,14 @@ func main() {
 		Todos: models.Todos{},
 	}
 
-	// load routes and store
-	routes.TodoRoutes(r, &DBTodoStore)
+	wsHub := models.NewWebSockethub()
+	go wsHub.StartBroadcasting()
+
+	// load routes and store and inject socket
+	routes.TodoRoutes(r, &DBTodoStore, wsHub)
+
+	// web socket route
+	routes.TodoWebSocketRoutes(r, wsHub)
 
 	// run server
 	if err := r.Run(":8080"); err != nil {
