@@ -34,11 +34,13 @@ class TodoGoService extends TodoApi {
       'title': title,
       'completed': false,
     });
-    request.write(body);
+    
+    // use UTF8 encoding
+    request.add(utf8.encode(body));
 
     // send request
     final response = await request.close();
-    if (response.statusCode != 200) {
+    if (response.statusCode != 201) {
       throw Exception('Failed to add todo');
     }
 
@@ -49,13 +51,14 @@ class TodoGoService extends TodoApi {
 
   @override
   Future<Todo> deleteTodo(String id) async {
-    final request = await client.deleteUrl(Uri.parse(baseUrl));
+    print("Delete: $baseUrl/$id");
+    final request = await client.deleteUrl(Uri.parse("$baseUrl/$id"));
     request.headers.set('Content-Type', 'application/json');
 
-    final body = jsonEncode({
-      'id': id,
-    });
-    request.write(body);
+    // final body = jsonEncode({
+    //   'id': id,
+    // });
+    // request.write(body);
 
     final response = await request.close();
     if (response.statusCode != 200) {
@@ -86,13 +89,13 @@ class TodoGoService extends TodoApi {
 
   @override
   Future<Todo> toggleComplete(String id) async {
-    final request = await client.putUrl(Uri.parse(baseUrl));
+    final request = await client.putUrl(Uri.parse("$baseUrl/$id"));
     request.headers.set('Content-Type', 'application/json');
 
-    final body = jsonEncode({
-      'id': id,
-    });
-    request.write(body);
+    // final body = jsonEncode({
+    //   'id': id,
+    // });
+    // request.write(body);
 
     final response = await request.close();
     if (response.statusCode != 200) {

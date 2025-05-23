@@ -28,13 +28,13 @@ class _TodoListScreenState extends State<TodoListScreen> {
   static String setupWSTodoBaseUrl()  {
   if (Platform.isAndroid) {
     // Android emulator
-    return "ws://10.0.2.2:8080/ws";
+    return "ws://10.0.2.2:8080/ws/todos";
   } else if (Platform.isIOS) {
     // iOS simulator or device
-    return "ws://localhost:8080/ws";
+    return "ws://localhost:8080/ws/todos";
   } else {
     // Other platforms, like web, Windows, etc.
-    return "ws://localhost:8080/ws";
+    return "ws://localhost:8080/ws/todos";
   }
   }
 
