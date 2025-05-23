@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:todo_frontend/api/api_service.dart';
 import 'package:todo_frontend/authentication/screens/auth_screen.dart';
 import 'package:todo_frontend/authentication/screens/login_screen.dart';
 import 'package:todo_frontend/authentication/screens/sign_up_screen.dart';
@@ -8,6 +9,8 @@ import 'package:todo_frontend/todo/screens/todo_list_screen.dart';
 
 class MyTodoApp extends StatelessWidget {
   const MyTodoApp({super.key});
+
+  static ApiService api = ApiService(); // initialise once
 
   Route<dynamic>? _customRoute(RouteSettings settings) {
     log(settings.name!);

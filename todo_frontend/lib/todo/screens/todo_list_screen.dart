@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:todo_frontend/authentication/widget/logout_button.dart';
 import 'package:todo_frontend/todo/models/todo.dart';
 import 'package:todo_frontend/todo/services/todo_api.dart';
 import 'package:todo_frontend/todo/services/todo_go_service.dart';
@@ -120,11 +121,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
       appBar: AppBar(
         title: const Text('Todo List'),
         actions: [
-          IconButton(onPressed: (){
-            // Handle logout action
-            print('Logout button pressed');
-            Navigator.pushReplacementNamed(context, '/');
-          }, icon: Icon(Icons.logout_sharp))
+          LogoutButton(),
         ],
       ),
       body: _todos.isEmpty

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"net/http"
 	"time"
 	"todo-backend/models"
 	"todo-backend/utils"
@@ -58,7 +59,16 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		c.SetCookie("token", tokenString, int(expirationTime.Unix()), "/", "localhost", false, true)
-		c.JSON(200, gin.H{"success": "user logged in"})
+		// c.JSON(200, gin.H{"success": "user logged in"})
+		c.JSON(http.StatusOK, struct {
+			Name  string `json:"name"`
+			Email string `json:"email"`
+			Role  string `json:"role"`
+		}{
+			Name:  existingUser.Name,
+			Email: existingUser.Email,
+			Role:  existingUser.Role,
+		})
 
 	}
 }
