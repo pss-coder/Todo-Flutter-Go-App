@@ -28,6 +28,7 @@ class TodoGoService extends TodoApi {
   @override
   Future<Todo> addTodo(String title) async {
     final request = await ApiService().client.postUrl(Uri.parse(baseUrl));
+    request.cookies.add(ApiService().cookies.first);
     request.headers.set('Content-Type', 'application/json');
     
     final body = jsonEncode({
@@ -53,6 +54,7 @@ class TodoGoService extends TodoApi {
   Future<Todo> deleteTodo(String id) async {
     print("Delete: $baseUrl/$id");
     final request = await ApiService().client.deleteUrl(Uri.parse("$baseUrl/$id"));
+    request.cookies.add(ApiService().cookies.first);
     request.headers.set('Content-Type', 'application/json');
 
     // final body = jsonEncode({
@@ -71,6 +73,8 @@ class TodoGoService extends TodoApi {
   @override
   Future<List<Todo>> getTodos() async {
     final requests = await ApiService().client.getUrl(Uri.parse(baseUrl));
+    requests.cookies.add(ApiService().cookies.first);
+
     final response = await requests.close();
 
     if (response.statusCode != 200) {
@@ -90,6 +94,7 @@ class TodoGoService extends TodoApi {
   @override
   Future<Todo> toggleComplete(String id) async {
     final request = await ApiService().client.putUrl(Uri.parse("$baseUrl/$id"));
+    request.cookies.add(ApiService().cookies.first);
     request.headers.set('Content-Type', 'application/json');
 
     // final body = jsonEncode({

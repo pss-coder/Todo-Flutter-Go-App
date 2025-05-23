@@ -7,4 +7,6 @@ class ApiService {
   ApiService._internal();
 
   final HttpClient client = HttpClient();
+  List<Cookie> cookies = []; // <-- Add this line
+
 }

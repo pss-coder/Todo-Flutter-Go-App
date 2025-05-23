@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:todo_frontend/api/api_service.dart';
 import 'package:todo_frontend/authentication/widget/logout_button.dart';
 import 'package:todo_frontend/todo/models/todo.dart';
 import 'package:todo_frontend/todo/services/todo_api.dart';
@@ -24,7 +25,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
   // late Future<List<Todo>> _todos;
   List<Todo> _todos = [];
 
-  late WebSocket socket;
+  WebSocket? socket;
+
+  bool isAuthenticated = true;
 
   static String setupWSTodoBaseUrl()  {
   if (Platform.isAndroid) {
@@ -41,7 +44,16 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   void connectToWebSocket() async {
     try {
-      socket = await WebSocket.connect(setupWSTodoBaseUrl());
+      // Convert cookies to header string
+      String cookieHeader = ApiService().cookies.map((c) => '${c.name}=${c.value}').join('; ');
+      print(cookieHeader);
+
+
+      socket = await WebSocket.connect(setupWSTodoBaseUrl(),
+      headers: {
+        'Cookie': cookieHeader
+      }
+      );
       print("connect to websocket");
 
       // we get our initial data from API once
@@ -51,7 +63,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
         });
       });
 
-      socket.listen((data) {
+      socket!.listen((data) {
         print("Received: $data");
 
       final todos = jsonDecode(data) 
@@ -64,6 +76,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
       });
     } catch (e) {
+      setState(() {
+        isAuthenticated = false;
+      });
       print('Websocket error: $e');
     }
   }
@@ -80,7 +95,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   @override
   void dispose() {
-    socket.close();
+    if (socket != null) {
+      socket!.close();
+    }
     _controller.dispose();
     myFocusNode.dispose();
     super.dispose();
@@ -124,7 +141,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
           LogoutButton(),
         ],
       ),
-      body: _todos.isEmpty
+      body: 
+      !isAuthenticated ? Center(child: Text("Fail to connect to websocket, might be unathenticated"),) :
+      _todos.isEmpty
       ? 
       Column(
               children: [
@@ -211,97 +230,6 @@ class _TodoListScreenState extends State<TodoListScreen> {
             ),
           ],
         )
-
-      
-      
-      // FutureBuilder(
-      //   future: _todos,
-      //   builder: (context, AsyncSnapshot<List<Todo>> snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.waiting) {
-      //       return const Center(child: CircularProgressIndicator());
-      //     } else if (snapshot.hasError) {
-      //       return Center(child: Text('Error: ${snapshot.error}'));
-      //     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-      //       return Column(
-      //         children: [
-      //           const Center(child: Text('No todos found. Add some!')),
-      //           Padding(
-      //         padding: const EdgeInsets.all(32.0),
-      //         child: TextFormField(
-      //           controller: _controller,
-      //           textInputAction: TextInputAction.go,
-      //           onFieldSubmitted: (value) async {
-      //             // Handle the submission of the new todo item
-      //             print('New todo item: $value');
-
-      //             // Here you can call your API to add the new todo item
-      //             await api.addTodo(value);
-
-      //             setState(() {
-      //               // Refresh the todo list
-      //               _todos = api.getTodos();
-      //             });
-        
-      //             // clear the text field
-      //             _controller.clear();
-      //           },
-      //           decoration: InputDecoration(
-      //             labelText: 'Add a new todo',
-      //             border: OutlineInputBorder(),
-      //           ),
-      //         ),
-      //       ),
-
-      //         ],
-      //       );
-      //     }
-
-      //     final todos = snapshot.data!;
-      //     return Column(
-      //     children: [
-      //       Expanded(
-      //         child: ListView.builder(
-      //           itemCount: todos.length, // Replace with your todo items count
-      //           itemBuilder: (context, index) {
-      //             return TodoRow(
-      //               todo: todos[index],
-      //               onToggleComplete: toggleComplete,
-      //               onDelete: deleteTodo,
-      //             );
-      //           },
-      //         ),
-      //       ),
-      //       Padding(
-      //         padding: const EdgeInsets.all(32.0),
-      //         child: TextFormField(
-      //           controller: _controller,
-      //           textInputAction: TextInputAction.go,
-      //           onFieldSubmitted: (value) async {
-      //             // Handle the submission of the new todo item
-      //             print('New todo item: $value');
-
-      //             // Here you can call your API to add the new todo item
-      //             await api.addTodo(value);
-
-      //             // setState(() {
-      //             //   // Refresh the todo list
-      //             //   _todos = api.getTodos();
-      //             // });
-        
-      //             // clear the text field
-      //             _controller.clear();
-      //           },
-      //           decoration: InputDecoration(
-      //             labelText: 'Add a new todo',
-      //             border: OutlineInputBorder(),
-      //           ),
-      //         ),
-      //       ),
-      //     ],
-      //   );
-
-      //   },
-      // ),
     );
   }
 }

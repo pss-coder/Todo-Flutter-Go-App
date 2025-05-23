@@ -78,6 +78,8 @@ class LoginScreen extends StatelessWidget {
                            }
                            catch(e) {
                             print(e);
+                             ScaffoldMessenger.of(context).showSnackBar( 
+                                SnackBar(content: Text('Failed to Login. Please check again')));
                            }
                            
                           

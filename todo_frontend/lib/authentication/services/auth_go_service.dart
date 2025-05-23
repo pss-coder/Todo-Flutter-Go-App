@@ -43,6 +43,10 @@ class AuthGoService extends AuthApi {
       throw Exception('Failed to login');
     }
 
+    // Get cookies from the response
+    List<Cookie> cookies = response.cookies;
+    ApiService().cookies = cookies;
+
     final data = await response.transform(utf8.decoder).join();
     return User.fromJson(jsonDecode(data));
   }

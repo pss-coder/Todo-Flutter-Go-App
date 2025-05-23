@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_frontend/api/api_service.dart';
 import 'package:todo_frontend/authentication/services/auth_api.dart';
 import 'package:todo_frontend/authentication/services/auth_go_service.dart';
 
@@ -15,6 +16,7 @@ class LogoutButton extends StatelessWidget {
             
             authService.logout().then((isLogoutSuccess) {
               if (isLogoutSuccess) {
+                ApiService().cookies = []; // clear cookies
                 Navigator.pushReplacementNamed(context, '/');
                 ScaffoldMessenger.of(context).showSnackBar( 
                                 SnackBar(content: Text('Logout success')));
