@@ -46,6 +46,8 @@ func main() {
 	wsHub := models.NewWebSockethub()
 	go wsHub.StartBroadcasting()
 
+	routes.AuthRoutes(r, db)
+
 	// load routes and store and inject socket
 	routes.TodoRoutes(r, &DBTodoStore, wsHub)
 

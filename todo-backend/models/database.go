@@ -26,9 +26,14 @@ func InitializeDatabase(cfg DbConfig) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	// Migrate the schema
+	// Migrate Todo schema
 	err = db.AutoMigrate(&Todo{})
 	if err != nil {
+		return nil, err
+	}
+
+	// Migrate User schema
+	if err := db.AutoMigrate(&User{}); err != nil {
 		return nil, err
 	}
 
