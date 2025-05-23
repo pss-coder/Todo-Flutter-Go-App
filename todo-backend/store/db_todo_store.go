@@ -15,9 +15,10 @@ type DBTodostore struct {
 
 func (store *DBTodostore) GetTodos() models.Todos {
 	// Get the Todos from the database
-	if err := store.DB.Find(&store.Todos).Error; err != nil {
+	if result := store.DB.Find(&store.Todos); result.Error != nil {
 		return nil
 	}
+
 	return store.Todos
 }
 

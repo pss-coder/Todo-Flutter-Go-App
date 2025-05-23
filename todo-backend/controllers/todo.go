@@ -47,9 +47,10 @@ func ToggleTodo(store store.TodoStore, ws *models.WebSockethub) gin.HandlerFunc 
 		}
 
 		todo := store.ToggleTodo(uint(idUint))
-		ws.NotifyClients(store.GetTodos())
 		c.JSON(http.StatusOK, todo)
 		fmt.Println("Todo: ", todo)
+
+		ws.NotifyClients(store.GetTodos())
 	}
 }
 
@@ -66,5 +67,7 @@ func DeleteTodo(store store.TodoStore, ws *models.WebSockethub) gin.HandlerFunc 
 
 		todo := store.DeleteTodo(uint(idUint))
 		c.JSON(http.StatusOK, todo)
+
+		ws.NotifyClients(store.GetTodos())
 	}
 }
