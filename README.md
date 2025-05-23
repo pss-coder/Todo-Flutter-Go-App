@@ -13,6 +13,8 @@ Todo:
 - Persistance Storage: Use a backend database to store todos - Done :)
 
 - Authentication:
+    - Learnt how to set up a simple JWT authentication server
+    - Apply learning to app
 
 
 - DevOps: Dockerise golang backend
