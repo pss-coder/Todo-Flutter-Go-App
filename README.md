@@ -12,12 +12,20 @@ Todo:
 
 - Persistance Storage: Use a backend database to store todos - Done :)
 
-- Authentication:
+- Authentication: -- Done
     - Learnt how to set up a simple JWT authentication server
     - Apply learning to app
 
 
+- Re-implement simple testing
+
+- API Specification -
+    - Learn how to Swaggerise
+
 - DevOps: Dockerise golang backend
+
+
+
 - Serverless in AWS??
 - Implement GraphQL query as backend <-
 - Twilio Service - Call to query my Todos, smart call
