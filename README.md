@@ -19,7 +19,8 @@ Todo:
 - Re-implement simple testing
 
 - API Specification -
-    - Learn how to Swaggerise
+    - Learn how to Swaggerise -- DONE
+        - LESSONS: generators are tough, Declarative Comments Format are ugly, and hard to maintain, is there a better way
 
 - DevOps: Dockerise golang backend
 

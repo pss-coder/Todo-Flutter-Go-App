@@ -10,6 +10,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetTodos godoc
+// @Summary      Get all todos
+// @Description  get all todos (requires login)
+// @Tags         todos
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {array}  models.Todo
+// @Router       /todos [get]
 func GetTodos(store store.TodoStore) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		todos := store.GetTodos()
@@ -17,6 +25,16 @@ func GetTodos(store store.TodoStore) gin.HandlerFunc {
 	}
 }
 
+// AddTodo godoc
+// @Summary      Add a new todo
+// @Description  Add a new todo item (requires login)
+// @Tags         todos
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        todo  body      models.Todo  true  "Todo to add"
+// @Success      201   {object}  models.Todo
+// @Router       /todos [post]
 func AddTodo(store store.TodoStore, ws *models.WebSockethub) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var todo models.Todo
@@ -35,6 +53,15 @@ func AddTodo(store store.TodoStore, ws *models.WebSockethub) gin.HandlerFunc {
 	}
 }
 
+// ToggleTodo godoc
+// @Summary      Toggle a todo's completion
+// @Description  Toggle the completed state of a todo by ID (requires login)
+// @Tags         todos
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        id    path      int  true  "Todo ID"
+// @Success      200   {object}  models.Todo
+// @Router       /todos/{id} [put]
 func ToggleTodo(store store.TodoStore, ws *models.WebSockethub) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")
@@ -54,6 +81,15 @@ func ToggleTodo(store store.TodoStore, ws *models.WebSockethub) gin.HandlerFunc 
 	}
 }
 
+// DeleteTodo godoc
+// @Summary      Delete a todo
+// @Description  Delete a todo by ID (requires login)
+// @Tags         todos
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        id    path      int  true  "Todo ID"
+// @Success      200   {object}  models.Todo
+// @Router       /todos/{id} [delete]
 func DeleteTodo(store store.TodoStore, ws *models.WebSockethub) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("id")

@@ -14,6 +14,17 @@ import (
 // TODO: USE PRIVATE KEY FOR JWT SIGNING
 var jwtKey = []byte("my_secret_key")
 
+// Login godoc
+// @Summary      Login user
+// @Description  Authenticates user and sets a JWT token in a cookie
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        user  body      models.User  true  "User credentials"
+// @Success      200  {object}  map[string]interface{}
+// @Failure      400  {object}  map[string]string
+// @Failure      401  {object}  map[string]string
+// @Router       /login [post]
 func Login(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var user models.User
@@ -73,6 +84,16 @@ func Login(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// Signup godoc
+// @Summary      Signup user
+// @Description  Registers a new user
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        user  body      models.User  true  "User info"
+// @Success      200  {object}  map[string]string
+// @Failure      400  {object}  map[string]string
+// @Router       /signup [post]
 func Signup(db *gorm.DB) gin.HandlerFunc {
 
 	return func(c *gin.Context) {
@@ -151,6 +172,13 @@ func Premium(c *gin.Context) {
 	c.JSON(200, gin.H{"success": "welcome to the premium page", "role": claims.Role})
 }
 
+// Logout godoc
+// @Summary      Logout user
+// @Description  Clears the authentication cookie
+// @Tags         auth
+// @Produce      json
+// @Success      200  {object}  map[string]string
+// @Router       /logout [get]
 func Logout(c *gin.Context) {
 	c.SetCookie("token", "", -1, "/", "localhost", false, true)
 	c.JSON(200, gin.H{"success": "user logged out"})
