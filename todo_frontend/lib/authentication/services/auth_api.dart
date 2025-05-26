@@ -1,4 +1,3 @@
-import 'dart:ffi';
 
 import 'package:todo_frontend/authentication/models/user.dart';
 
