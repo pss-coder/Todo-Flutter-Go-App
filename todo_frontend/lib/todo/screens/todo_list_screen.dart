@@ -17,6 +17,7 @@ class TodoListScreen extends StatefulWidget {
 }
 
 class _TodoListScreenState extends State<TodoListScreen> {
+  final ScrollController _scrollController = ScrollController();
   final TextEditingController _controller = TextEditingController();
   FocusNode myFocusNode = FocusNode();
 
@@ -89,7 +90,6 @@ class _TodoListScreenState extends State<TodoListScreen> {
     // TODO: implement initState
     super.initState();
     connectToWebSocket();
-
     // _todos = api.getTodos();
   }
 
@@ -98,6 +98,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
     if (socket != null) {
       socket!.close();
     }
+    _scrollController.dispose();
     _controller.dispose();
     myFocusNode.dispose();
     super.dispose();
@@ -186,6 +187,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
           children: [
             Expanded(
               child: ListView.builder(
+                controller: _scrollController,
                 itemCount: _todos.length, // Replace with your todo items count
                 itemBuilder: (context, index) {
                   return TodoRow(
@@ -211,16 +213,27 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   print('New todo item: $value');
 
                   // Here you can call your API to add the new todo item
-                  await api.addTodo(value);
-
-                  // setState(() {
-                  //   // Refresh the todo list
-                  //   _todos = api.getTodos();
-                  // });
-        
-                  // clear the text field
-                  _controller.clear();
+                  await api.addTodo(value).then((todo) {
+                    _controller.clear();
                   myFocusNode.requestFocus();
+
+                  // Scroll to top (since reverse: true, this is position 0)
+                    _scrollController.animateTo(
+                      _scrollController.position.maxScrollExtent + 30,
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.fastOutSlowIn,
+                    );
+                  });
+                  
+                    //  // Scroll to top (since reverse: true, this is position 0)
+                    // if (_scrollController.hasClients) {
+                    //   _scrollController.animateTo(
+                    //     _scrollController.position.maxScrollExtent,
+                    //     duration: const Duration(milliseconds: 300),
+                    //     curve: Curves.easeOut,
+                    //   );
+                    // }
+
                 },
                 decoration: InputDecoration(
                   labelText: 'Add a new todo',

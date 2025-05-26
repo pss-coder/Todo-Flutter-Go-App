@@ -9,7 +9,6 @@ Todo:
 
 - Testing: Do Unit Testing <- Start Early and Small - Done
 
-
 - Persistance Storage: Use a backend database to store todos - Done :)
 
 - Authentication: -- Done

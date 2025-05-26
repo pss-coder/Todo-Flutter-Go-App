@@ -73,7 +73,7 @@ class LoginScreen extends StatelessWidget {
                               ScaffoldMessenger.of(context).showSnackBar( 
                                 SnackBar(content: Text('Welcome ${user.name} with email ${user.email}, role ${user.role}')))
                             });
-
+                            
                             Navigator.pushNamedAndRemoveUntil(context, '/todo-list', (route) => false);
                            }
                            catch(e) {
