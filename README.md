@@ -23,9 +23,3 @@ Todo:
         - LESSONS: generators are tough, Declarative Comments Format are ugly, and hard to maintain, is there a better way
 
 - DevOps: Dockerise golang backend
-
-
-
-- Serverless in AWS??
-- Implement GraphQL query as backend <-
-- Twilio Service - Call to query my Todos, smart call
